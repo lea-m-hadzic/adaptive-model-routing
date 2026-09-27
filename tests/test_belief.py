@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from budgeted_model_escalation import belief as bel
-from budgeted_model_escalation.models import RewardModel, ScoreModel, SensorModel
+from adaptive_model_routing import belief as bel
+from adaptive_model_routing.models import RewardModel, ScoreModel, SensorModel
 
 CHEAP = SensorModel("cheap", tpr=0.75, fpr=0.10, cost=1.0)  # binary sensor, for hand-checkable math
 SCORE = ScoreModel("cheap", separation=2.0, cost=1.0, decision_threshold=1.28)

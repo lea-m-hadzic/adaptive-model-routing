@@ -10,7 +10,7 @@ from dataclasses import replace
 
 from common import base_parser, output_path, plot_sweep, report, score_thresholds
 
-from budgeted_model_escalation import ProblemParams, sweep
+from adaptive_model_routing import ProblemParams, sweep
 
 VALUES = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0]
 X_COL, X_LABEL, LOG_X = "cheap_separation", "Cheap-model separation $d'$", None

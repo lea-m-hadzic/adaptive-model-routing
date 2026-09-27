@@ -3,7 +3,7 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from budgeted_model_escalation import (
+from adaptive_model_routing import (
     Action,
     CheapOnly,
     ExpensiveOnly,
@@ -14,8 +14,8 @@ from budgeted_model_escalation import (
     simulate,
     summarize_by_policy,
 )
-from budgeted_model_escalation.environment import ItemBatch
-from budgeted_model_escalation.simulation import run_policy
+from adaptive_model_routing.environment import ItemBatch
+from adaptive_model_routing.simulation import run_policy
 
 PARAMS = ProblemParams()
 T = PARAMS.cheap.decision_threshold

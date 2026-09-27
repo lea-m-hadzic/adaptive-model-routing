@@ -7,7 +7,7 @@ from dataclasses import replace
 
 from common import base_parser, output_path, plot_sweep, report, score_thresholds
 
-from budgeted_model_escalation import ProblemParams, sweep
+from adaptive_model_routing import ProblemParams, sweep
 
 VALUES = [1, 2, 5, 10, 20, 50, 100]
 X_COL, X_LABEL, LOG_X = "expensive_cost", "Expensive-model cost $c_{\\mathrm{exp}}$", [1, 10, 100]

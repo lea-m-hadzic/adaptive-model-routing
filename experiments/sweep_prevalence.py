@@ -5,7 +5,7 @@
 
 from common import base_parser, output_path, plot_sweep, report, score_thresholds
 
-from budgeted_model_escalation import ProblemParams, sweep
+from adaptive_model_routing import ProblemParams, sweep
 
 VALUES = [0.001, 0.005, 0.01, 0.05, 0.1]
 X_COL, X_LABEL, LOG_X = "p_target", "Target prevalence $p$", [0.001, 0.01, 0.1]

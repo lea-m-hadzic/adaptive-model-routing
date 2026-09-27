@@ -28,9 +28,9 @@ from common import (Z95, base_parser, ci_band, ci_handle, fmt_pm, num, output_pa
                     reference_line, write_latex_table)
 from style import BLUE, BLUE_TINT, INK, LABEL, MUTED, TEXT_WIDTH, line_kw, save, top_legend
 
-from budgeted_model_escalation import FixedCascade, PosteriorThreshold, ProblemParams
-from budgeted_model_escalation.environment import sample_items
-from budgeted_model_escalation.simulation import run_policy, tune_cascade
+from adaptive_model_routing import FixedCascade, PosteriorThreshold, ProblemParams
+from adaptive_model_routing.environment import sample_items
+from adaptive_model_routing.simulation import run_policy, tune_cascade
 
 TRUE_P = [0.01, 0.1]
 RATIOS = {

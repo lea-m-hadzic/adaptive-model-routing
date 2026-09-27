@@ -14,8 +14,8 @@ import numpy as np
 from common import output_path, score_thresholds
 from style import BLUE, BLUE_TINT, INK, MUTED, POLICY, TEXT_WIDTH, save, top_legend
 
-from budgeted_model_escalation import PosteriorThreshold, ProblemParams
-from budgeted_model_escalation import belief as bel
+from adaptive_model_routing import PosteriorThreshold, ProblemParams
+from adaptive_model_routing import belief as bel
 
 P_TARGETS = [0.01, 0.1]
 X_RANGE = (-3.0, 6.0)

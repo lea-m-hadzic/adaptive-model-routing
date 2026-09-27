@@ -30,7 +30,7 @@ import run_default
 import sweep_cheap_quality
 import sweep_expensive_cost
 import sweep_prevalence
-from budgeted_model_escalation import ProblemParams
+from adaptive_model_routing import ProblemParams
 
 SWEEPS = [(sweep_prevalence, "Prevalence"), (sweep_expensive_cost, "Expensive cost"),
           (sweep_cheap_quality, "Cheap $d'$")]

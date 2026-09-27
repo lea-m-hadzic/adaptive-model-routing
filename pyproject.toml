@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "budgeted-model-escalation"
+name = "adaptive-model-routing"
 version = "0.1.0"
 description = "Adaptive model escalation for rare-target detection under limited inference budgets."
 readme = "README.md"

@@ -3,10 +3,10 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from budgeted_model_escalation import FixedCascade, PosteriorThreshold, ProblemParams, compare, simulate
-from budgeted_model_escalation.environment import sample_items
-from budgeted_model_escalation.metrics import paired_difference, summarize_by_policy
-from budgeted_model_escalation.simulation import cascade_mean_reward, run_policy, tune_cascade
+from adaptive_model_routing import FixedCascade, PosteriorThreshold, ProblemParams, compare, simulate
+from adaptive_model_routing.environment import sample_items
+from adaptive_model_routing.metrics import paired_difference, summarize_by_policy
+from adaptive_model_routing.simulation import cascade_mean_reward, run_policy, tune_cascade
 
 PARAMS = ProblemParams().with_updates(p_target=0.05)
 

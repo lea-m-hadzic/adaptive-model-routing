@@ -162,7 +162,7 @@ without a significant advantage at $r = 1$; say this in the caption.
 ## Layout
 
 ```
-src/budgeted_model_escalation/
+src/adaptive_model_routing/
   models.py       parameters: ScoreModel (cheap), SensorModel (expensive), RewardModel, ProblemParams
   belief.py       Bayes update, terminal values, accept threshold, escalation band
   environment.py  item sampling and terminal reward

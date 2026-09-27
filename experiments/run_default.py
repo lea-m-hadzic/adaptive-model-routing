@@ -18,7 +18,7 @@ from common import (Z95, base_parser, fmt_pm, num, output_path, report, score_th
                     write_latex_table)
 from style import INK, LABEL, MUTED, POLICY, TEXT_WIDTH, save
 
-from budgeted_model_escalation import ProblemParams, compare
+from adaptive_model_routing import ProblemParams, compare
 
 
 def build_params(p_target: float, cheap_separation: float, cheap_threshold: float, expensive_cost: float) -> ProblemParams:

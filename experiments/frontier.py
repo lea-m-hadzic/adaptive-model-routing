@@ -19,10 +19,10 @@ import pandas as pd
 from common import base_parser, output_path
 from style import LABEL, MUTED, TEXT_WIDTH, line_kw, point_kw, save, top_legend
 
-from budgeted_model_escalation import CheapOnly, ExpensiveOnly, FixedCascade, PosteriorThreshold, ProblemParams
-from budgeted_model_escalation.environment import sample_items
-from budgeted_model_escalation.metrics import summarize
-from budgeted_model_escalation.simulation import run_policy, tune_cascade
+from adaptive_model_routing import CheapOnly, ExpensiveOnly, FixedCascade, PosteriorThreshold, ProblemParams
+from adaptive_model_routing.environment import sample_items
+from adaptive_model_routing.metrics import summarize
+from adaptive_model_routing.simulation import run_policy, tune_cascade
 
 P_TARGETS = [0.01, 0.1]
 LAMBDAS = np.unique(np.concatenate([np.geomspace(0.02, 8, 20), [1.0]]))

@@ -12,7 +12,7 @@ import pandas as pd
 from matplotlib.patches import Patch
 from style import BLUE, INK, LABEL, MUTED, POLICY, TEXT_WIDTH, VERMILLION, line_kw, save, top_legend
 
-from budgeted_model_escalation import PosteriorThreshold, ProblemParams
+from adaptive_model_routing import PosteriorThreshold, ProblemParams
 
 ROOT = Path(__file__).resolve().parents[1]
 Z95 = 1.96

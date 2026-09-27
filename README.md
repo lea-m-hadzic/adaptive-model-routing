@@ -15,8 +15,6 @@ threshold tuning, and can strictly improve on it when sufficiently confident che
 predictions can be accepted without escalation. Its advantage depends on the accuracy of the
 assumed observation model.
 
-![PDF](figures/policy_diagram.pdf)
-
 ## Layout
 
 ```

@@ -15,6 +15,28 @@ threshold tuning, and can strictly improve on it when sufficiently confident che
 predictions can be accepted without escalation. Its advantage depends on the accuracy of the
 assumed observation model.
 
+## Layout
+
+```
+src/adaptive_model_routing/
+  models.py       
+  belief.py   
+  environment.py  
+  policies.py  
+  simulation.py   
+  metrics.py     
+experiments/
+  make_paper_assets.py   
+  policy_diagram.py
+  run_default.py
+  frontier.py
+  robustness.py
+  sweep_*.py
+  style.py               
+  common.py              
+tests/           
+```
+
 ## Model
 
 Each item is a small POMDP that ends when the agent accepts or rejects.
@@ -162,21 +184,3 @@ without a significant advantage at $r = 1$; say this in the caption.
 - Everything is reproducible from `--seed` (evaluation) and `--tune-seed` (cascade tuning).
 - All policies run on the same sampled items and model outputs (common random numbers).
 - Differences between policies are paired per item and reported with 95% confidence intervals.
-
-## Layout
-
-```
-src/adaptive_model_routing/
-  models.py       parameters: ScoreModel (cheap), SensorModel (expensive), RewardModel, ProblemParams
-  belief.py       Bayes update, terminal values, accept threshold, escalation band
-  environment.py  item sampling and terminal reward
-  policies.py     baseline and adaptive policies (with cost scale λ)
-  simulation.py   act -> observe -> update loop; Monte Carlo; cascade tuning; sweeps
-  metrics.py      recall, precision, FPR, FNR, cost, escalation rate, reward, paired differences
-experiments/
-  make_paper_assets.py   regenerates everything below
-  policy_diagram.py, run_default.py, frontier.py, robustness.py, sweep_*.py
-  style.py               figure theme: fonts, sizes, policy colors and line styles, PNG+PDF saving
-  common.py              CLI, shared plotting helpers, LaTeX tables
-tests/            Bayes updates, policy logic, simulator, tuning, paired statistics
-```

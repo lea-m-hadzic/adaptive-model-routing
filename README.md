@@ -1,4 +1,8 @@
-# Budgeted Model Escalation for Rare-Target Search
+<div align="center">
+
+#  Budgeted Model Escalation for Rare-Target Search
+
+</div>
 
 Adaptive model escalation for rare-target detection under limited inference budgets.
 CS 238 / AA 228 final project. Fully synthetic: no datasets, APIs, or trained models.

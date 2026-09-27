@@ -31,7 +31,7 @@ Beyond the default comparison, the project includes:
 - a **budget frontier** that sweeps a Lagrange multiplier on query cost;
 - a **robustness study** in which the agent plans with wrong parameters.
 
-_The problem follows the belief-state POMDP formulation of Kochenderfer, Wheeler & Wray, [Algorithms for Decision Making](https://algorithmsbook.com) (MIT Press, 2022). It is motivated by rare-target search in satellite imagery, where a cheap screening model and an expensive high-accuracy model are both available._
+_The problem follows the belief-state POMDP formulation of Kochenderfer, Wheeler & Wray, [Algorithms for Decision Making](https://algorithmsbook.com) (MIT Press, 2022)._
 
 ## Model
 

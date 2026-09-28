@@ -1,19 +1,7 @@
-"""Regenerate every figure and table used in the paper, from scratch.
+"""Regenerate every figure and table used in the paper.
 
     python experiments/make_paper_assets.py            # full run (~2 min)
     python experiments/make_paper_assets.py --quick    # 20k items, for a smoke test
-
-Each figure is written as .png (preview, 300 dpi) and .pdf (for the paper).
-
-Paper assets:
-    Fig 1  figures/policy_diagram.png      reject / escalate / accept regions
-    Tab 1  results/default_comparison.tex  default setting, paired diffs vs tuned cascade
-    Fig 2  figures/frontier.png            terminal reward & recall vs query cost
-    Fig 3  figures/sweeps_summary.png      prevalence / cost / cheap-quality sweeps
-    Tab 2  results/sweeps_summary.tex      numbers behind Fig 3
-    Fig 4  figures/robustness.png          misspecified prevalence and cheap-model d'
-    Tab 3  results/robustness_breakeven.tex break-even misspecification ratios
-Supplementary: figures/default_comparison.png, figures/sweep_*.png, all CSVs.
 """
 
 from __future__ import annotations

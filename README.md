@@ -1,6 +1,6 @@
 <div align="center">
 
-# Budgeted Model Escalation for Rare-Target Search
+## Budgeted Model Escalation for Rare-Target Search
 
 </div>
 

@@ -9,7 +9,7 @@ description = "Adaptive model escalation for rare-target detection under limited
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["pomdp", "model-routing", "rare-target-detection"]
-dependencies = ["numpy", "pandas", "matplotlib"]
+dependencies = ["numpy", "pandas"]
 
 [project.optional-dependencies]
 dev = ["pytest"]

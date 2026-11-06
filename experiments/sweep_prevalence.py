@@ -1,16 +1,16 @@
 """Sweep target prevalence p_target (all other parameters at defaults).
 
     python experiments/sweep_prevalence.py
+
+Writes results/sweep_prevalence.csv.
 """
 
-from common import base_parser, output_path, plot_sweep, report, score_thresholds
+from common import base_parser, csv_path, report, score_thresholds
 
 from adaptive_model_routing import ProblemParams, sweep
 
 VALUES = [0.001, 0.005, 0.01, 0.05, 0.1]
-X_COL, X_LABEL, LOG_X = "p_target", "Target prevalence $p$", [0.001, 0.01, 0.1]
-TABLE_LABEL = r"Prevalence $p$"
-TITLE = "Prevalence"
+X_COL = "p_target"
 
 
 def make_params(p: float) -> ProblemParams:
@@ -23,10 +23,9 @@ def run(n_items: int, seed: int, tune_seed: int):
         lo, hi = score_thresholds(make_params(v))
         print(f"  p_target={v:<6} reject x < {lo:6.2f}   accept x > {hi:6.2f}")
     summary = sweep(X_COL, VALUES, make_params, n_items, seed, tune_seed)
-    csv, png = output_path("sweep_prevalence", "csv"), output_path("sweep_prevalence", "png")
+    csv = csv_path("sweep_prevalence")
     summary.to_csv(csv, index=False)
-    figs = plot_sweep(summary, X_COL, X_LABEL, png, log_x=LOG_X)
-    report(summary, X_COL, csv, figs)
+    report(summary, X_COL, csv)
     return summary
 
 

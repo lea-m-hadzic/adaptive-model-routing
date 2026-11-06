@@ -1,22 +1,19 @@
-"""Experiment 1: compare all policies under default parameters (Table 1).
+"""Compare all policies under default parameters.
 
     python experiments/run_default.py
     python experiments/run_default.py --p-target 0.05 --expensive-cost 5
 
 The tuned cascade picks its threshold on --tune-seed and is evaluated on --seed.
 Differences are paired (same items) and reported with 95% CIs.
-Writes results/default_comparison.{csv,tex} and figures/default_comparison.png.
+Writes results/default_comparison.csv.
 """
 
 from __future__ import annotations
 
 from dataclasses import replace
 
-import matplotlib.pyplot as plt
 import pandas as pd
-from common import (Z95, base_parser, fmt_pm, num, output_path, report, score_thresholds, significant,
-                    write_latex_table)
-from style import INK, LABEL, MUTED, POLICY, TEXT_WIDTH, save
+from common import base_parser, csv_path, report, score_thresholds
 
 from adaptive_model_routing import ProblemParams, compare
 
@@ -39,60 +36,12 @@ def describe_adaptive_policy(params: ProblemParams) -> None:
     print(f"adaptive policy: reject x < {lo:.2f}, escalate {lo:.2f} <= x <= {hi:.2f}, accept x > {hi:.2f}")
 
 
-def plot(summary: pd.DataFrame, stem) -> list:
-    """Supplementary figure: one horizontal bar per policy for four metrics."""
-    panels = [
-        ("diff_vs_ref", "$\\Delta$ net reward vs. tuned cascade"),
-        ("recall", "Recall"),
-        ("avg_cost", "Query cost per item"),
-        ("frac_expensive", "Fraction escalated"),
-    ]
-    names = summary["policy"].tolist()
-    colors = [POLICY[n]["color"] for n in names]
-    fig, axes = plt.subplots(2, 2, figsize=(TEXT_WIDTH, 3.6), sharey=True)
-    for ax, (col, title) in zip(axes.flat, panels):
-        vals = summary[col].to_numpy()
-        err = Z95 * summary["diff_vs_ref_se"].to_numpy() if col == "diff_vs_ref" else None
-        ax.barh(range(len(names)), vals, xerr=err, color=colors, height=0.62,
-                error_kw=dict(ecolor=INK, lw=0.8, capsize=2, capthick=0.8))
-        ax.axvline(0, color=MUTED, linewidth=0.6)
-        for y, v in enumerate(vals):
-            ax.annotate(f"${v:.2f}$", (v, y), xytext=(3 if v >= 0 else -3, 0), textcoords="offset points",
-                        ha="left" if v >= 0 else "right", va="center", fontsize=7, color=MUTED)
-        ax.set_yticks(range(len(names)), [LABEL[n] for n in names])
-        ax.invert_yaxis()
-        ax.margins(x=0.22)
-        ax.grid(axis="y", visible=False)
-        ax.set_title(title)
-    fig.tight_layout(h_pad=1.4, w_pad=1.5)
-    return save(fig, stem)
-
-
-def write_table(summary: pd.DataFrame, path) -> None:
-    """Table 1. Delta is paired vs the tuned cascade with a 95% CI; bold = significantly better."""
-    t = pd.DataFrame({
-        "policy": summary["policy"].map(LABEL),
-        "recall": [num(v, "{:.3f}") for v in summary["recall"]],
-        "precision": [num(v, "{:.3f}") for v in summary["precision"]],
-        "cost": [num(v) for v in summary["avg_cost"]],
-        "esc": [num(v) for v in summary["frac_expensive"]],
-        "net": [num(v) for v in summary["expected_reward"]],
-        "diff": ["---" if p == "tuned_cascade" else fmt_pm(m, s, bold=m > 0 and significant(m, s))
-                 for p, m, s in zip(summary["policy"], summary["diff_vs_ref"], summary["diff_vs_ref_se"])],
-    })
-    write_latex_table(t, path, columns={
-        "policy": "Policy", "recall": "Recall", "precision": "Precision", "cost": "Cost / item",
-        "esc": "Escalated", "net": "Net reward", "diff": r"$\Delta$ vs.\ tuned (95\% CI)"})
-
-
 def run(params: ProblemParams, n_items: int, seed: int, tune_seed: int, name: str = "default_comparison") -> pd.DataFrame:
     describe_adaptive_policy(params)
     summary = compare(params, n_items, seed, tune_seed)
-    csv, tex, png = output_path(name, "csv"), output_path(name, "tex"), output_path(name, "png")
+    csv = csv_path(name)
     summary.to_csv(csv, index=False)
-    write_table(summary, tex)
-    figs = plot(summary, png)
-    report(summary, None, csv, tex, figs)
+    report(summary, None, csv)
     return summary
 
 

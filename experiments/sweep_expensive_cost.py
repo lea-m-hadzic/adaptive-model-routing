@@ -1,18 +1,18 @@
 """Sweep the expensive model's per-query cost (cheap model cost stays 1).
 
     python experiments/sweep_expensive_cost.py
+
+Writes results/sweep_expensive_cost.csv.
 """
 
 from dataclasses import replace
 
-from common import base_parser, output_path, plot_sweep, report, score_thresholds
+from common import base_parser, csv_path, report, score_thresholds
 
 from adaptive_model_routing import ProblemParams, sweep
 
 VALUES = [1, 2, 5, 10, 20, 50, 100]
-X_COL, X_LABEL, LOG_X = "expensive_cost", "Expensive-model cost $c_{\\mathrm{exp}}$", [1, 10, 100]
-TABLE_LABEL = r"Cost $c_{\mathrm{exp}}$"
-TITLE = "Expensive-model cost"
+X_COL = "expensive_cost"
 
 
 def make_params(c: float) -> ProblemParams:
@@ -26,10 +26,9 @@ def run(n_items: int, seed: int, tune_seed: int):
         lo, hi = score_thresholds(make_params(v))
         print(f"  expensive_cost={v:<4} reject x < {lo:6.2f}   accept x > {hi:6.2f}")
     summary = sweep(X_COL, VALUES, make_params, n_items, seed, tune_seed)
-    csv, png = output_path("sweep_expensive_cost", "csv"), output_path("sweep_expensive_cost", "png")
+    csv = csv_path("sweep_expensive_cost")
     summary.to_csv(csv, index=False)
-    figs = plot_sweep(summary, X_COL, X_LABEL, png, log_x=LOG_X)
-    report(summary, X_COL, csv, figs)
+    report(summary, X_COL, csv)
     return summary
 
 

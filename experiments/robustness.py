@@ -14,19 +14,16 @@ world), so it is unaffected by misspecification. The break-even ratios are where
 
     python experiments/robustness.py
 
-Writes results/robustness.csv, results/robustness_breakeven.{csv,tex}, figures/robustness.png.
+Writes results/robustness.csv and results/robustness_breakeven.csv.
 """
 
 from __future__ import annotations
 
 from dataclasses import replace
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from common import (Z95, base_parser, ci_band, ci_handle, fmt_pm, num, output_path, plain_log_ticks,
-                    reference_line, write_latex_table)
-from style import BLUE, BLUE_TINT, INK, LABEL, MUTED, TEXT_WIDTH, line_kw, save, top_legend
+from common import Z95, base_parser, csv_path
 
 from adaptive_model_routing import FixedCascade, PosteriorThreshold, ProblemParams
 from adaptive_model_routing.environment import sample_items
@@ -37,8 +34,6 @@ RATIOS = {
     "prevalence": np.geomspace(0.1, 10, 11),
     "cheap_dprime": np.geomspace(0.5, 2, 11),
 }
-TICKS = {"prevalence": [0.1, 0.3, 1, 3, 10], "cheap_dprime": [0.5, 0.7, 1, 1.4, 2]}
-AXIS_LABEL = {"prevalence": "Assumed / true prevalence, $r$", "cheap_dprime": "Assumed / true cheap-model $d'$, $r$"}
 
 
 def assumed(env: ProblemParams, axis: str, r: float) -> ProblemParams | None:
@@ -107,95 +102,21 @@ def break_even(d: pd.DataFrame) -> dict:
             "break_even_high": walk(d[d.ratio >= 1.0 - 1e-9])}
 
 
-def tolerated_range(b: pd.Series) -> str:
-    """'$[0.38, 2.82]$'; a bound that never crosses within the grid shows as the grid edge (<= or >=)."""
-    grid = RATIOS[b.axis]
-    lo = f"{b.break_even_low:.2f}" if np.isfinite(b.break_even_low) else f"\\le {grid.min():.2f}"
-    hi = f"{b.break_even_high:.2f}" if np.isfinite(b.break_even_high) else f"\\ge {grid.max():.2f}"
-    return f"$[{lo}, {hi}]$" + ("" if b.advantage_significant else r"$^\dagger$")
-
-
-def plot(df: pd.DataFrame, be: pd.DataFrame, stem) -> list:
-    axes_names = list(RATIOS)
-    fig, axes = plt.subplots(len(TRUE_P), len(axes_names), figsize=(TEXT_WIDTH, 4.5), sharex="col", sharey="row")
-    letters = iter("abcdefgh")
-    for i, p in enumerate(TRUE_P):
-        for j, axis in enumerate(axes_names):
-            ax = axes[i, j]
-            d = df[(df.true_p == p) & (df.axis == axis)].sort_values("ratio")
-            b = be[(be.true_p == p) & (be.axis == axis)].iloc[0]
-            x, y, se = d.ratio.to_numpy(), d.diff_vs_tuned.to_numpy(), d.diff_vs_tuned_se.to_numpy()
-
-            if b.advantage_significant:
-                lo = b.break_even_low if np.isfinite(b.break_even_low) else x.min()
-                hi = b.break_even_high if np.isfinite(b.break_even_high) else x.max()
-                ax.axvspan(lo, hi, color=BLUE_TINT, alpha=0.7, linewidth=0, zorder=0,
-                           label="Tolerated range (above tuned cascade)")
-                for r in (b.break_even_low, b.break_even_high):
-                    if np.isfinite(r):
-                        ax.plot(r, 0, marker="o", markersize=4, markerfacecolor="white", markeredgecolor=INK,
-                                markeredgewidth=0.8, zorder=7, linestyle="none")
-                        ax.annotate(f"${r:.2f}$", (r, 0), xytext=(0, 5), textcoords="offset points", ha="center",
-                                    fontsize=7, color=INK)
-            else:
-                ax.text(0.03, 0.06, "No significant advantage at $r = 1$", transform=ax.transAxes, fontsize=7,
-                        color=MUTED)
-            ax.axvline(1.0, color=MUTED, linewidth=0.6, linestyle=(0, (1, 2)), zorder=1)
-            reference_line(ax, label=LABEL["tuned_cascade"] + " (reference)")
-            ax.axhline(d.fixed_diff_vs_tuned.iloc[0], **line_kw("fixed_cascade", markers=False))
-            ci_band(ax, x, y, se, BLUE)
-            ax.plot(x, y, **line_kw("posterior_threshold", markersize=3.2,
-                                    label="Adaptive with assumed ratio $r$"))
-            plain_log_ticks(ax, TICKS[axis])
-            what = "prevalence" if axis == "prevalence" else "cheap-model $d'$"
-            ax.set_title(f"({next(letters)}) Misspecified {what}, true $p = {p:g}$")
-            if i == len(TRUE_P) - 1:
-                ax.set_xlabel(AXIS_LABEL[axis])
-        axes[i, 0].set_ylabel("$\\Delta$ net reward vs.\ntuned cascade")
-    fig.align_ylabels(axes[:, 0])
-    handles, labels = axes[1, 0].get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    order = ["Adaptive with assumed ratio $r$", "Tolerated range (above tuned cascade)",
-             LABEL["tuned_cascade"] + " (reference)", LABEL["fixed_cascade"]]
-    handles = [by_label[k] for k in order]
-    handles.insert(1, ci_handle())
-    order.insert(1, ci_handle().get_label())
-    fig.tight_layout(h_pad=1.2, w_pad=1.5)
-    top_legend(fig, handles, order, ncol=3)
-    return save(fig, stem)
-
-
 def run(n_items: int, seed: int, tune_seed: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     df = pd.concat([robustness_rows(ProblemParams().with_updates(p_target=p), n_items, seed, tune_seed)
                     for p in TRUE_P], ignore_index=True)
     be = pd.DataFrame([{"true_p": p, "axis": axis, **break_even(d)}
                        for (p, axis), d in df.groupby(["true_p", "axis"], sort=False)])
 
-    csv, be_csv, be_tex, png = (output_path("robustness", "csv"), output_path("robustness_breakeven", "csv"),
-                                output_path("robustness_breakeven", "tex"), output_path("robustness", "png"))
+    csv, be_csv = csv_path("robustness"), csv_path("robustness_breakeven")
     df.to_csv(csv, index=False)
     be.to_csv(be_csv, index=False)
-    # Table 3: tolerated misspecification range; dagger = no significant advantage at r = 1,
-    # so the break-even points are within noise.
-    t = pd.DataFrame({
-        "true_p": [num(v, "{:g}") for v in be.true_p],
-        "axis": be.axis.map({"prevalence": "Prevalence", "cheap_dprime": "Cheap-model $d'$"}),
-        "adv": [fmt_pm(m, s, bold=sig and m > 0) for m, s, sig in
-                zip(be.advantage_at_correct, be.advantage_se, be.advantage_significant)],
-        "range": [tolerated_range(r) for _, r in be.iterrows()],
-    })
-    write_latex_table(t, be_tex, columns={"true_p": "True $p$", "axis": "Misspecified parameter",
-                                          "adv": r"Advantage at $r=1$ (95\% CI)",
-                                          "range": r"Tolerated range of $r$"}, align="llrr")
-    with open(be_tex, "a") as f:
-        f.write("% dagger: advantage at r = 1 is not significant, so the break-even ratios are within noise.\n")
-    figs = plot(df, be, png)
 
     print(df[["true_p", "axis", "ratio", "regret", "regret_se", "diff_vs_tuned", "diff_vs_tuned_se"]]
           .to_string(index=False, float_format=lambda x: f"{x:.3f}"))
     print()
     print(be.to_string(index=False, float_format=lambda x: f"{x:.3f}"))
-    print(f"\nwrote {csv.name}, {be_csv.name}, {be_tex.name}, " + ", ".join(f.name for f in figs))
+    print(f"\nwrote results/{csv.name}, results/{be_csv.name}")
     return df, be
 
 

@@ -101,13 +101,12 @@ All differences are paired per item on common random numbers (200k items), with 
 
 ## Tech stack
 
-- `Python 3.10`
+- **Python 3.10+**
 - [`numpy`](https://numpy.org) for simulation and Bayes updates
 - [`pandas`](https://pandas.pydata.org) for per-item results and summaries
-- [`matplotlib`](https://matplotlib.org) for figures (Computer Modern fonts; Okabe–Ito colorblind-safe palette)
 - [`pytest`](https://pytest.org) for tests
 
-Results in `results/` were generated with Python 3.13, numpy 2.5, pandas 3.0, and matplotlib 3.11. 
+Results in `results/` were generated with Python 3.13, numpy 2.5, and pandas 3.0. CPU only; each experiment runs in under a minute on a laptop.
 
 ## Repository layout
 
@@ -125,19 +124,18 @@ Results in `results/` were generated with Python 3.13, numpy 2.5, pandas 3.0, an
 │   ├── simulation.py             act → observe → update loop, Monte Carlo, cascade tuning, sweeps
 │   └── metrics.py                recall, precision, FPR/FNR, cost, escalation rate, paired differences
 │
-├── experiments/                  one runnable script per experiment
-│   ├── run_default.py            Table 1 (+ supplementary bar chart)
-│   ├── frontier.py               Fig 2: λ and t sweeps
+├── experiments/                  one runnable script per experiment, each writing a CSV
+│   ├── run_default.py            all policies at the default setting
+│   ├── frontier.py               budget frontier: λ and t sweeps
 │   ├── sweep_prevalence.py       prevalence sweep
 │   ├── sweep_expensive_cost.py   expensive-model cost sweep
 │   ├── sweep_cheap_quality.py    cheap-model d′ sweep
-│   ├── robustness.py             Fig 4, Table 3: misspecified prevalence and d′
-│   ├── common.py                 CLI, shared plotting helpers, LaTeX tables
-│   └── style.py                  figure theme: fonts, sizes, policy colors, PNG + PDF saving
+│   ├── robustness.py             misspecified prevalence and d′, with break-even ratios
+│   └── common.py                 shared CLI, output paths, printing
 │
 ├── tests/                        Bayes updates, policy logic, simulator, tuning, paired statistics
 │
-└── results/                      generated CSVs (LaTeX tables are regenerated locally)
+└── results/                      generated CSVs (committed for reproducibility)
 ```
 
 ## Running it
@@ -151,21 +149,21 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Or run experiments individually. Each writes a CSV to `results/`:
+Run the experiments. Each writes a CSV to `results/` and prints a summary:
 
 ```bash
-python experiments/run_default.py           # --help to override p, d', t, c_exp
-python experiments/frontier.py              # Fig 2
+python experiments/run_default.py           # default setting; --help to override p, d', t, c_exp
+python experiments/frontier.py              # budget frontier
 python experiments/sweep_prevalence.py      # p in {0.001, ..., 0.1}
 python experiments/sweep_expensive_cost.py  # c_exp in {1, ..., 100}
 python experiments/sweep_cheap_quality.py   # d' in {0.5, ..., 4}
-python experiments/robustness.py            # Fig 4, Table 3
+python experiments/robustness.py            # misspecification + break-even ratios
 ```
 
 **Reproducibility**
 - Every script takes `--seed` (evaluation, default 0), `--tune-seed` (cascade tuning, default 1), and `--n-items` (default 200,000).
 - All policies run on the same sampled items and model outputs, and differences are paired per item.
-- Rerunning `make_paper_assets.py` reproduces the committed CSVs and PNGs byte-for-byte. The PDFs differ only in their embedded creation timestamp.
+- With the default arguments, rerunning the scripts reproduces the committed CSVs byte-for-byte.
 
 ## License
 

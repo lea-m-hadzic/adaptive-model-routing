@@ -8,10 +8,6 @@ _A cheap detector flags a possible target in a satellite tile. Should the system
 
 This project treats that question as a small POMDP. The agent sees a cheap model's confidence score, updates its belief about whether a target is present, and then accepts, rejects, or escalates to an expensive model. It escalates only when the value of information from the expensive model exceeds its cost. This model-based policy **matches a well-tuned cascade without any threshold tuning**. It **strictly improves on the cascade** when confident cheap-model scores can be accepted without escalation: up to +2.09 ± 0.24 net reward per item at 10% prevalence. Its advantage depends on an accurate observation model.
 
-![Policy diagram](figures/policy_diagram.png)
-
-*The adaptive policy in score space. Top: the posterior after the cheap score x, with the belief thresholds derived from the reward model. Bottom: class-conditional score densities. Scores below x<sub>low</sub> are rejected, scores above x<sub>high</sub> are accepted, and only the uncertain band in between is sent to the expensive model. At higher prevalence (right) the whole band shifts left. The dashed line is a fixed cascade's single cutoff.*
-
 ---
 
 ## What's here

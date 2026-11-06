@@ -4,7 +4,7 @@
 
 </div>
 
-_A cheap detector flags a possible target in a satellite tile. Should the system trust it, dismiss it, or pay ten times as much to ask a better model?_
+> A cheap detector flags a possible target in a satellite tile. Should the system trust it, dismiss it, or pay ten times as much to ask a better model?
 
 This project treats that question as a small POMDP. The agent sees a cheap model's confidence score, updates its belief about whether a target is present, and then accepts, rejects, or escalates to an expensive model. It escalates only when the value of information from the expensive model exceeds its cost. This model-based policy **matches a well-tuned cascade without any threshold tuning**. It **strictly improves on the cascade** when confident cheap-model scores can be accepted without escalation: up to +2.09 ± 0.24 net reward per item at 10% prevalence. Its advantage depends on an accurate observation model.
 
